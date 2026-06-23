@@ -58,8 +58,7 @@ export default function Home() {
     </div>
   );
 }
-<<<<<<< HEAD
-=======
+
 
 const styles = {
   page: {
@@ -195,4 +194,3 @@ const styles = {
     textAlign: "center",
   },
 };
->>>>>>> 6cfb5c5666e2b9636f8a37191ab471ebe8c01621
