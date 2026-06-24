@@ -2,7 +2,7 @@ export default function Home() {
   return (
     <main className="page">
       <header className="header">
-<img src="/logo_transparent (3).png" className="logo" />
+        <img src="/logo_transparent (3).png" className="logo" />
         <nav>
           <a href="#services">Services</a>
           <a href="#about">About</a>
@@ -63,7 +63,7 @@ export default function Home() {
       </section>
 
       <footer>
-<img src="/logo_transparent (3).png" className="footerLogo" />
+        <img src="/logo_transparent (3).png" className="footerLogo" />
         <div><h4>Contact</h4><p>info@elevatewheelstudio.com</p></div>
         <div><h4>Hours</h4><p>Monday - Friday<br />9:00 AM - 6:00 PM<br />Saturday<br />By Appointment<br />Sunday<br />Closed</p></div>
         <div><h4>Follow Us</h4><p className="socials">◎ f ✉</p></div>
@@ -72,77 +72,234 @@ export default function Home() {
 
       <style jsx>{`
         *{box-sizing:border-box}
-        .page{margin:0;background:#050505;color:white;font-family:Arial,Helvetica,sans-serif}
-.header{height:130px;display:flex;align-items:center;justify-content:space-between;padding:0 42px;background:#030303;border-bottom:1px solid #e4001b}
-.logo{width:320px;max-height:none;object-fit:contain}
-        nav{display:flex;gap:42px}
-        nav a{color:white;text-decoration:none;text-transform:uppercase;font-weight:800;font-size:14px}
+        html,body{margin:0;padding:0}
+        .page{margin:0;background:#050505;color:white;font-family:Arial,Helvetica,sans-serif;overflow-x:hidden}
+
+        .header{
+          height:118px;
+          display:flex;
+          align-items:center;
+          justify-content:space-between;
+          padding:0 60px;
+          background:#030303;
+          border-bottom:1px solid #e4001b;
+        }
+
+        .logo{
+          width:260px;
+          max-height:92px;
+          object-fit:contain;
+          display:block;
+        }
+
+        nav{display:flex;gap:52px;align-items:center}
+        nav a{
+          color:white;
+          text-decoration:none;
+          text-transform:uppercase;
+          font-weight:900;
+          font-size:17px;
+          letter-spacing:.4px;
+        }
 
         .hero{
-min-height:650px;
-          padding:70px 42px;
+          min-height:570px;
+          padding:80px 60px;
           display:flex;
           align-items:center;
           background:
-            linear-gradient(90deg,#050505 0%,rgba(5,5,5,.9) 42%,rgba(5,5,5,.25) 70%),
+            linear-gradient(90deg,#050505 0%,rgba(5,5,5,.94) 34%,rgba(5,5,5,.55) 58%,rgba(5,5,5,.1) 100%),
             url('/wheel-hero.jpg');
           background-size:cover;
-background-position:110% center;
+          background-position:center right;
           border-bottom:1px solid #292929;
         }
-        .heroText{max-width:700px}
-        h1{font-size:62px;line-height:1.05;margin:0 0 22px;font-weight:900}
+
+        .heroText{max-width:760px}
+        h1{
+          font-size:72px;
+          line-height:1.04;
+          margin:0 0 24px;
+          font-weight:900;
+          letter-spacing:-2px;
+        }
         h1 span{color:#e4001b;font-style:italic}
-        .line{width:70px;height:3px;background:#e4001b;margin:0 0 18px}
-        .hero p{font-size:19px;line-height:1.6;color:#eee;max-width:610px}
+        .line{width:82px;height:3px;background:#e4001b;margin:0 0 24px}
+        .hero p{
+          font-size:22px;
+          line-height:1.55;
+          color:#f1f1f1;
+          max-width:690px;
+          margin:0;
+        }
 
-        .features{display:grid;grid-template-columns:repeat(4,1fr);background:#080808;border-bottom:1px solid #292929}
-.features div{display:grid;grid-template-columns:70px 1fr;ga
-.features img{width:64px}
-        .features b{text-transform:uppercase}
-        .features p{grid-column:2;color:#ccc;margin:0;line-height:1.5}
+        .features{
+          display:grid;
+          grid-template-columns:repeat(4,1fr);
+          background:#080808;
+          border-bottom:1px solid #292929;
+        }
 
-        .booking{margin:32px;padding:32px;border:1px solid #333;border-radius:10px;display:grid;grid-template-columns:2fr 1.1fr;gap:28px;background:#090909}
-        h2{font-size:34px;text-transform:uppercase;margin:0 0 8px}
-        .formBox>p{color:#ddd}
-        form{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:20px}
-        input,select{background:#111;border:1px solid #333;color:white;padding:16px;border-radius:6px}
-        button{grid-column:1/-1;background:#e4001b;color:white;border:0;padding:18px;border-radius:5px;text-transform:uppercase;font-weight:800}
+        .features div{
+          display:grid;
+          grid-template-columns:76px 1fr;
+          gap:20px;
+          padding:36px 42px;
+          border-right:1px solid #292929;
+          align-items:center;
+          min-height:132px;
+        }
 
-        .workflow div{display:grid;grid-template-columns:70px 1fr;gap:18px;border:1px solid #333;border-radius:8px;padding:24px;margin-bottom:16px;background:#101010;align-items:center}
-        .workflow img{width:52px}
-        .workflow h3{text-transform:uppercase;margin:0}
-        .workflow p{grid-column:2;color:#ddd;line-height:1.5;margin:0}
+        .features img{width:60px}
+        .features b{
+          text-transform:uppercase;
+          font-size:17px;
+          font-weight:900;
+        }
+        .features p{
+          grid-column:2;
+          color:#ccc;
+          margin:0;
+          line-height:1.5;
+          font-size:15px;
+        }
+
+        .booking{
+          margin:38px;
+          padding:38px;
+          border:1px solid #333;
+          border-radius:10px;
+          display:grid;
+          grid-template-columns:2fr 1.05fr;
+          gap:34px;
+          background:#090909;
+        }
+
+        h2{
+          font-size:38px;
+          text-transform:uppercase;
+          margin:0 0 8px;
+          letter-spacing:-.5px;
+        }
+        .formBox>p{color:#ddd;font-size:17px}
+
+        form{
+          display:grid;
+          grid-template-columns:1fr 1fr;
+          gap:15px;
+          margin-top:22px;
+        }
+
+        input,select{
+          background:#111;
+          border:1px solid #333;
+          color:white;
+          padding:18px 16px;
+          border-radius:6px;
+          font-size:16px;
+          min-height:58px;
+        }
+
+        button{
+          grid-column:1/-1;
+          background:#e4001b;
+          color:white;
+          border:0;
+          padding:20px;
+          border-radius:5px;
+          text-transform:uppercase;
+          font-weight:900;
+          font-size:16px;
+          cursor:pointer;
+        }
+
+        .workflow div{
+          display:grid;
+          grid-template-columns:82px 1fr;
+          gap:20px;
+          border:1px solid #333;
+          border-radius:8px;
+          padding:26px;
+          margin-bottom:16px;
+          background:#101010;
+          align-items:center;
+          min-height:124px;
+        }
+
+        .workflow img{width:64px}
+        .workflow h3{
+          text-transform:uppercase;
+          margin:0;
+          font-size:20px;
+        }
+        .workflow p{
+          grid-column:2;
+          color:#ddd;
+          line-height:1.5;
+          margin:0;
+          font-size:16px;
+        }
 
         .about{
-          margin:32px;
-          padding:55px 35px;
-          min-height:300px;
+          margin:38px;
+          padding:65px 42px;
+          min-height:330px;
           background:
-            linear-gradient(90deg,#070707 0%,rgba(7,7,7,.86) 45%,rgba(7,7,7,.25) 100%),
+            linear-gradient(90deg,#070707 0%,rgba(7,7,7,.86) 42%,rgba(7,7,7,.25) 100%),
             url('/wheel-shop.jpg');
           background-size:cover;
           background-position:center right;
           border:1px solid #333;
         }
-        .about h2{font-size:36px;margin:8px 0}
-        .about p{max-width:560px;color:#ddd;line-height:1.6}
-        .about a{display:inline-block;margin-top:14px;color:#e4001b;border:1px solid #e4001b;padding:13px 22px;text-decoration:none;text-transform:uppercase;font-weight:800}
-        .red{color:#e4001b!important;text-transform:uppercase;font-weight:800}
 
-        footer{display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr;gap:30px;padding:35px;border-top:1px solid #333;background:#050505;color:#bbb}
-.footerLogo{width:160px}
-        footer h4{color:white;text-transform:uppercase}
+        .about h2{
+          font-size:42px;
+          line-height:1.1;
+          margin:8px 0 16px;
+        }
+        .about p{
+          max-width:600px;
+          color:#ddd;
+          line-height:1.6;
+          font-size:17px;
+        }
+        .about a{
+          display:inline-block;
+          margin-top:16px;
+          color:#e4001b;
+          border:1px solid #e4001b;
+          padding:14px 24px;
+          text-decoration:none;
+          text-transform:uppercase;
+          font-weight:900;
+        }
+        .red{color:#e4001b!important;text-transform:uppercase;font-weight:900}
+
+        footer{
+          display:grid;
+          grid-template-columns:1.5fr 1fr 1fr 1fr;
+          gap:34px;
+          padding:38px 60px;
+          border-top:1px solid #333;
+          background:#050505;
+          color:#bbb;
+        }
+
+        .footerLogo{width:230px;object-fit:contain}
+        footer h4{color:white;text-transform:uppercase;margin-top:0}
         .socials{font-size:30px;letter-spacing:16px;color:white}
         .copy{grid-column:1/-1;color:#888;font-size:13px}
 
         @media(max-width:850px){
-          .header{height:auto;flex-direction:column;gap:20px;padding:20px}
-          nav{flex-wrap:wrap;justify-content:center}
+          .header{height:auto;flex-direction:column;gap:20px;padding:22px}
+          nav{flex-wrap:wrap;justify-content:center;gap:22px}
+          .hero{min-height:520px;padding:60px 24px;background-position:center right}
+          h1{font-size:46px}
+          .hero p{font-size:18px}
           .features,.booking,form,footer{grid-template-columns:1fr}
           .features div,.workflow div{grid-template-columns:1fr}
           .features p,.workflow p{grid-column:1}
-          h1{font-size:44px}
+          .booking,.about{margin:22px;padding:24px}
         }
       `}</style>
     </main>
