@@ -2,7 +2,7 @@ export default function Home() {
   return (
     <main className="page">
       <header className="header">
-        <img src="/ELEVATE LOGO.png" className="logo" />
+<img src="/logo_transparent (3).png" className="logo" />
         <nav>
           <a href="#services">Services</a>
           <a href="#about">About</a>
@@ -63,7 +63,7 @@ export default function Home() {
       </section>
 
       <footer>
-        <img src="/ELEVATE LOGO.png" className="footerLogo" />
+<img src="/logo_transparent (3).png" className="footerLogo" />
         <div><h4>Contact</h4><p>info@elevatewheelstudio.com</p></div>
         <div><h4>Hours</h4><p>Monday - Friday<br />9:00 AM - 6:00 PM<br />Saturday<br />By Appointment<br />Sunday<br />Closed</p></div>
         <div><h4>Follow Us</h4><p className="socials">◎ f ✉</p></div>
