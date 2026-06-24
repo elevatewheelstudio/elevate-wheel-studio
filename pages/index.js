@@ -2,7 +2,7 @@ export default function Home() {
   return (
     <main className="page">
       <header className="header">
-       <img src="/ELEVATE LOGO.png" className="logo" />
+<img src="/ELEVATE%20LOGO.png" className="logo" />
         <nav>
           <a href="#services">Services</a>
           <a href="#about">About</a>
@@ -51,7 +51,7 @@ export default function Home() {
       </section>
 
       <footer>
-      <img src="/ELEVATE LOGO.png" className="footerLogo" />
+<img src="/ELEVATE%20LOGO.png" className="footerLogo" />
         <p>Contact: info@elevatewheelstudio.com</p>
         <p>© 2026 Elevate Wheel Studio. All rights reserved.</p>
       </footer>
