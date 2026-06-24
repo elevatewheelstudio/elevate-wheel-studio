@@ -211,15 +211,23 @@ export default function Home() {
           margin-top:22px;
         }
 
-        input,select{
-          background:#111;
-          border:1px solid #333;
-          color:white;
-          padding:18px 16px;
-          border-radius:6px;
-          font-size:16px;
-          min-height:58px;
-        }
+input,select{
+  background:#111;
+  border:1px solid #333;
+  color:white;
+  padding:18px 16px;
+  border-radius:6px;
+  font-size:16px;
+  min-height:58px;
+  width:100%;
+  cursor:pointer;
+}
+
+input[type="date"]{
+  appearance:auto;
+  -webkit-appearance:auto;
+  color-scheme:dark;
+}
 
         button{
           grid-column:1/-1;
