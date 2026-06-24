@@ -32,7 +32,28 @@ export default function Home() {
 
           <form>
             <input placeholder="Dealership *" />
-            <input type="datetime-local" />
+<input type="date" required />
+<select required>
+  <option>Appointment Time *</option>
+  <option>9:00 AM</option>
+  <option>9:30 AM</option>
+  <option>10:00 AM</option>
+  <option>10:30 AM</option>
+  <option>11:00 AM</option>
+  <option>11:30 AM</option>
+  <option>12:00 PM</option>
+  <option>12:30 PM</option>
+  <option>1:00 PM</option>
+  <option>1:30 PM</option>
+  <option>2:00 PM</option>
+  <option>2:30 PM</option>
+  <option>3:00 PM</option>
+  <option>3:30 PM</option>
+  <option>4:00 PM</option>
+  <option>4:30 PM</option>
+  <option>5:00 PM</option>
+  <option>5:30 PM</option>
+</select>
             <select><option>Wheel Quantity *</option><option>1</option><option>2</option><option>3</option><option>4</option></select>
             <select><option>Affected Wheel Position(s) *</option><option>Front Left</option><option>Front Right</option><option>Rear Left</option><option>Rear Right</option><option>Multiple Wheels</option></select>
             <input placeholder="Advisor Name *" />
