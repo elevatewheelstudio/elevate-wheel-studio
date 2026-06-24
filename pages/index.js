@@ -30,10 +30,10 @@ export default function Home() {
           <h2>Book an Appointment</h2>
           <p>Complete the form below and we’ll confirm your appointment.</p>
 
-          <form>
-            <input placeholder="Dealership *" />
-<input type="date" required />
-<select required>
+<form action="https://formspree.io/f/xdarajqa" method="POST">
+<input name="dealership" placeholder="Dealership *" required />
+<input name="appointment_date" type="date" required />
+<select name="appointment_time" required>
   <option>Appointment Time *</option>
   <option>9:00 AM</option>
   <option>9:30 AM</option>
