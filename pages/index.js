@@ -73,13 +73,13 @@ export default function Home() {
       <style jsx>{`
         *{box-sizing:border-box}
         .page{margin:0;background:#050505;color:white;font-family:Arial,Helvetica,sans-serif}
-        .header{height:110px;display:flex;align-items:center;justify-content:space-between;padding:0 42px;background:#030303;border-bottom:1px solid #e4001b}
-        .logo{width:230px;max-height:95px;object-fit:contain}
+.header{height:130px;display:flex;align-items:center;justify-content:space-between;padding:0 42px;background:#030303;border-bottom:1px solid #e4001b}
+.logo{width:320px;max-height:none;object-fit:contain}
         nav{display:flex;gap:42px}
         nav a{color:white;text-decoration:none;text-transform:uppercase;font-weight:800;font-size:14px}
 
         .hero{
-          min-height:500px;
+min-height:650px;
           padding:70px 42px;
           display:flex;
           align-items:center;
@@ -87,7 +87,7 @@ export default function Home() {
             linear-gradient(90deg,#050505 0%,rgba(5,5,5,.9) 42%,rgba(5,5,5,.25) 70%),
             url('/wheel-hero.jpg');
           background-size:cover;
-          background-position:center right;
+background-position:110% center;
           border-bottom:1px solid #292929;
         }
         .heroText{max-width:700px}
@@ -97,8 +97,8 @@ export default function Home() {
         .hero p{font-size:19px;line-height:1.6;color:#eee;max-width:610px}
 
         .features{display:grid;grid-template-columns:repeat(4,1fr);background:#080808;border-bottom:1px solid #292929}
-        .features div{display:grid;grid-template-columns:60px 1fr;gap:18px;padding:28px 35px;border-right:1px solid #292929;align-items:center}
-        .features img{width:48px}
+.features div{display:grid;grid-template-columns:70px 1fr;ga
+.features img{width:64px}
         .features b{text-transform:uppercase}
         .features p{grid-column:2;color:#ccc;margin:0;line-height:1.5}
 
@@ -131,7 +131,7 @@ export default function Home() {
         .red{color:#e4001b!important;text-transform:uppercase;font-weight:800}
 
         footer{display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr;gap:30px;padding:35px;border-top:1px solid #333;background:#050505;color:#bbb}
-        .footerLogo{width:240px}
+.footerLogo{width:160px}
         footer h4{color:white;text-transform:uppercase}
         .socials{font-size:30px;letter-spacing:16px;color:white}
         .copy{grid-column:1/-1;color:#888;font-size:13px}
