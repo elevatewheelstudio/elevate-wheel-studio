@@ -23,11 +23,11 @@ export default function Home() {
       </section>
 
       <section className="features" id="services">
-        <div><b>Premium Quality</b><p>Top-tier materials and industry-leading techniques.</p></div>
-        <div><b>Precision Crafted</b><p>Every detail is crafted with unmatched precision.</p></div>
-        <div><b>Built To Last</b><p>Durable finishes that stand the test of time.</p></div>
-        <div><b>Customer Focused</b><p>Your satisfaction is our top priority.</p></div>
-      </section>
+  <div><span className="featureIcon">✪</span><b>Premium Quality</b><p>Top-tier materials and industry-leading techniques.</p></div>
+  <div><span className="featureIcon">⌖</span><b>Precision Crafted</b><p>Every detail is crafted with unmatched precision.</p></div>
+  <div><span className="featureIcon">🛡</span><b>Built To Last</b><p>Durable finishes that stand the test of time.</p></div>
+  <div><span className="featureIcon">♡</span><b>Customer Focused</b><p>Your satisfaction is our top priority.</p></div>
+</section>
 
       <section className="booking" id="booking">
         <div className="formBox">
@@ -97,6 +97,13 @@ export default function Home() {
 
         .features { display: grid; grid-template-columns: repeat(4,1fr); border-top: 1px solid #292929; border-bottom: 1px solid #292929; background: #080808; }
         .features div { padding: 35px; border-right: 1px solid #292929; }
+        .featureIcon {
+  display:block;
+  color:#e4001b;
+  font-size:42px;
+  margin-bottom:16px;
+  line-height:1;
+}
         .features b { color: white; text-transform: uppercase; }
         .features p { color: #ccc; }
 
