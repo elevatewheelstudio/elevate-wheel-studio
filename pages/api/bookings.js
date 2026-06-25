@@ -19,7 +19,7 @@ export default async function handler(req, res) {
     const bookingRef = `EWS-${Date.now()}`;
 
     await resend.emails.send({
-      from: "Elevate Wheel Studio <info@elevatewheelstudio.com>",
+from: "Elevate Wheel Studio <onboarding@resend.dev>",
       to: "info@elevatewheelstudio.com",
       subject: `New Booking Received - ${bookingRef}`,
       html: `
@@ -46,7 +46,7 @@ export default async function handler(req, res) {
 
     if (data.customerEmail) {
       await resend.emails.send({
-        from: "Elevate Wheel Studio <info@elevatewheelstudio.com>",
+from: "Elevate Wheel Studio <onboarding@resend.dev>",
         to: data.customerEmail,
         subject: `Appointment Request Received - ${bookingRef}`,
         html: `
