@@ -44,10 +44,10 @@ export default function Home() {
         setSubmitted(true);
         window.scrollTo({ top: 0, behavior: "smooth" });
       } else {
-        alert("Something went wrong. Please try again.");
+alert(result.error || "Something went wrong. Please try again.");
       }
     } catch (error) {
-      alert("Something went wrong. Please try again.");
+alert(result.error || "Something went wrong. Please try again.");
     }
 
     setLoading(false);
