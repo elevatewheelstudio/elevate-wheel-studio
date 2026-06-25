@@ -20,7 +20,7 @@ export default async function handler(req, res) {
 
     await resend.emails.send({
 from: "Elevate Wheel Studio <onboarding@resend.dev>",
-      to: "info@elevatewheelstudio.com",
+onboarding@resend.dev
       subject: `New Booking Received - ${bookingRef}`,
       html: `
         <div style="font-family:Arial;background:#050505;color:white;padding:30px;">
