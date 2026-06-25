@@ -12,7 +12,7 @@ export default async function handler(req, res) {
 
   try {
     await resend.emails.send({
-      from: "Elevate Wheel Studio <onboarding@resend.dev>",
+from: "Elevate Wheel Studio <info@elevatewheelstudio.com>",
       to: data.customerEmail,
       subject: `Booking Confirmation - ${bookingRef}`,
       html: `
@@ -46,7 +46,7 @@ export default async function handler(req, res) {
     });
 
     await resend.emails.send({
-      from: "Elevate Wheel Studio <onboarding@resend.dev>",
+from: "Elevate Wheel Studio <info@elevatewheelstudio.com>",
       to: "info@elevatewheelstudio.com",
       subject: `New Booking Received - ${bookingRef}`,
       html: `
