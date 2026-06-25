@@ -30,21 +30,23 @@ export default function Home() {
     e.preventDefault();
     setLoading(true);
 
-    const res = await fetch("/api/bookings", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(form)
-    });
+    try {
+      const res = await fetch("/api/bookings", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form)
+      });
 
-    const result = await res.json();
+      const result = await res.json();
 
-    if (result.success) {
-      setBookingRef(result.bookingRef);
-      setSubmitted(true);
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    } else {
+      if (result.success) {
+        setBookingRef(result.bookingRef);
+        setSubmitted(true);
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      } else {
+        alert("Something went wrong. Please try again.");
+      }
+    } catch (error) {
       alert("Something went wrong. Please try again.");
     }
 
@@ -117,11 +119,11 @@ export default function Home() {
           <p>Complete the form below and we’ll confirm your appointment.</p>
 
           <form onSubmit={submitBooking}>
-            <input name="dealership" placeholder="Dealership *" onChange={update} required />
+            <input name="dealership" placeholder="Dealership *" value={form.dealership} onChange={update} required />
 
-            <input name="appointmentDate" type="date" onChange={update} required />
+            <input name="appointmentDate" type="date" value={form.appointmentDate} onChange={update} required />
 
-            <select name="appointmentTime" onChange={update} required>
+            <select name="appointmentTime" value={form.appointmentTime} onChange={update} required>
               <option value="">Appointment Time *</option>
               <option>9:00 AM</option>
               <option>9:30 AM</option>
@@ -143,7 +145,7 @@ export default function Home() {
               <option>5:30 PM</option>
             </select>
 
-            <select name="wheelQuantity" onChange={update} required>
+            <select name="wheelQuantity" value={form.wheelQuantity} onChange={update} required>
               <option value="">Wheel Quantity *</option>
               <option>1</option>
               <option>2</option>
@@ -151,7 +153,7 @@ export default function Home() {
               <option>4</option>
             </select>
 
-            <select name="wheelPosition" onChange={update} required>
+            <select name="wheelPosition" value={form.wheelPosition} onChange={update} required>
               <option value="">Affected Wheel Position(s) *</option>
               <option>Front Left</option>
               <option>Front Right</option>
@@ -161,16 +163,16 @@ export default function Home() {
               <option>All Wheels</option>
             </select>
 
-            <input name="advisorName" placeholder="Advisor Name *" onChange={update} required />
-            <input name="advisorEmail" type="email" placeholder="Advisor Email *" onChange={update} required />
-            <input name="repairOrder" placeholder="Repair Order (RO#) *" onChange={update} required />
-            <input name="vehicleTag" placeholder="Vehicle Tag# *" onChange={update} required />
-            <input name="vehicle" placeholder="Vehicle Make / Model *" onChange={update} required />
-            <input name="vin" placeholder="VIN#" onChange={update} />
-            <input name="customerName" placeholder="Customer Name *" onChange={update} required />
-            <input name="customerEmail" type="email" placeholder="Customer Email *" onChange={update} required />
+            <input name="advisorName" placeholder="Advisor Name *" value={form.advisorName} onChange={update} required />
+            <input name="advisorEmail" type="email" placeholder="Advisor Email *" value={form.advisorEmail} onChange={update} required />
+            <input name="repairOrder" placeholder="Repair Order (RO#) *" value={form.repairOrder} onChange={update} required />
+            <input name="vehicleTag" placeholder="Vehicle Tag# *" value={form.vehicleTag} onChange={update} required />
+            <input name="vehicle" placeholder="Vehicle Make / Model *" value={form.vehicle} onChange={update} required />
+            <input name="vin" placeholder="VIN#" value={form.vin} onChange={update} />
+            <input name="customerName" placeholder="Customer Name *" value={form.customerName} onChange={update} required />
+            <input name="customerEmail" type="email" placeholder="Customer Email *" value={form.customerEmail} onChange={update} required />
 
-            <textarea name="notes" placeholder="Notes / Special Instructions" onChange={update}></textarea>
+            <textarea name="notes" placeholder="Notes / Special Instructions" value={form.notes} onChange={update}></textarea>
 
             <button type="submit" disabled={loading}>
               {loading ? "Submitting..." : "Submit Booking Request"}
@@ -211,186 +213,67 @@ const styles = `
 html,body{margin:0;padding:0}
 .page{margin:0;background:#050505;color:white;font-family:Arial,Helvetica,sans-serif;overflow-x:hidden}
 
-.header{
-  height:118px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  padding:0 60px;
-  background:#030303;
-  border-bottom:1px solid #e4001b;
-}
+.header{height:118px;display:flex;align-items:center;justify-content:space-between;padding:0 60px;background:#030303;border-bottom:1px solid #e4001b}
 .logo{width:260px;max-height:92px;object-fit:contain}
 nav{display:flex;gap:52px}
 nav a{color:white;text-decoration:none;text-transform:uppercase;font-weight:900;font-size:17px}
 
-.hero{
-  min-height:570px;
-  padding:80px 60px;
-  display:flex;
-  align-items:center;
-  background:
-    linear-gradient(90deg,#050505 0%,rgba(5,5,5,.94) 34%,rgba(5,5,5,.55) 58%,rgba(5,5,5,.1) 100%),
-    url('/wheel-hero.jpg');
-  background-size:cover;
-  background-position:center right;
-  border-bottom:1px solid #292929;
-}
+.hero{min-height:570px;padding:80px 60px;display:flex;align-items:center;background:linear-gradient(90deg,#050505 0%,rgba(5,5,5,.94) 34%,rgba(5,5,5,.55) 58%,rgba(5,5,5,.1) 100%),url('/wheel-hero.jpg');background-size:cover;background-position:center right;border-bottom:1px solid #292929}
 .heroText{max-width:760px}
 h1{font-size:72px;line-height:1.04;margin:0 0 24px;font-weight:900;letter-spacing:-2px}
 h1 span{color:#e4001b;font-style:italic}
 .line{width:82px;height:3px;background:#e4001b;margin:0 0 24px}
 .hero p{font-size:22px;line-height:1.55;color:#f1f1f1;max-width:690px;margin:0}
 
-.features{
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  background:#080808;
-  border-bottom:1px solid #292929;
-}
-.features div{
-  display:grid;
-  grid-template-columns:76px 1fr;
-  gap:20px;
-  padding:36px 42px;
-  border-right:1px solid #292929;
-  align-items:center;
-  min-height:132px;
-}
+.features{display:grid;grid-template-columns:repeat(4,1fr);background:#080808;border-bottom:1px solid #292929}
+.features div{display:grid;grid-template-columns:76px 1fr;gap:20px;padding:36px 42px;border-right:1px solid #292929;align-items:center;min-height:132px}
 .features img{width:60px}
 .features b{text-transform:uppercase;font-size:17px;font-weight:900}
 .features p{grid-column:2;color:#ccc;margin:0;line-height:1.5;font-size:15px}
 
-.booking{
-  margin:38px;
-  padding:38px;
-  border:1px solid #333;
-  border-radius:10px;
-  display:grid;
-  grid-template-columns:2fr 1.05fr;
-  gap:34px;
-  background:#090909;
-}
+.booking{margin:38px;padding:38px;border:1px solid #333;border-radius:10px;display:grid;grid-template-columns:2fr 1.05fr;gap:34px;background:#090909}
 h2{font-size:38px;text-transform:uppercase;margin:0 0 8px;letter-spacing:-.5px}
 .formBox>p{color:#ddd}
 form{display:grid;grid-template-columns:1fr 1fr;gap:15px;margin-top:22px}
-input,select,textarea{
-  background:#111;
-  border:1px solid #333;
-  color:white;
-  padding:18px 16px;
-  border-radius:6px;
-  font-size:16px;
-  min-height:58px;
-  width:100%;
-}
+input,select,textarea{background:#111;border:1px solid #333;color:white;padding:18px 16px;border-radius:6px;font-size:16px;min-height:58px;width:100%}
 textarea{grid-column:1/-1;min-height:100px}
 input[type="date"]{appearance:auto;-webkit-appearance:auto;color-scheme:dark}
-button{
-  grid-column:1/-1;
-  background:#e4001b;
-  color:white;
-  border:0;
-  padding:20px;
-  border-radius:5px;
-  text-transform:uppercase;
-  font-weight:900;
-  font-size:16px;
-  cursor:pointer;
-}
-.workflow div{
-  display:grid;
-  grid-template-columns:82px 1fr;
-  gap:20px;
-  border:1px solid #333;
-  border-radius:8px;
-  padding:26px;
-  margin-bottom:16px;
-  background:#101010;
-  align-items:center;
-}
+button{grid-column:1/-1;background:#e4001b;color:white;border:0;padding:20px;border-radius:5px;text-transform:uppercase;font-weight:900;font-size:16px;cursor:pointer}
+button:disabled{opacity:.75;cursor:not-allowed}
+
+.workflow div{display:grid;grid-template-columns:82px 1fr;gap:20px;border:1px solid #333;border-radius:8px;padding:26px;margin-bottom:16px;background:#101010;align-items:center}
 .workflow img{width:60px}
 .workflow h3{text-transform:uppercase;margin:0}
 .workflow p{grid-column:2;color:#ddd;line-height:1.5;margin:0}
 
-.about{
-  margin:38px;
-  padding:55px 35px;
-  min-height:300px;
-  background:
-    linear-gradient(90deg,#070707 0%,rgba(7,7,7,.86) 45%,rgba(7,7,7,.25) 100%),
-    url('/wheel-shop.jpg');
-  background-size:cover;
-  background-position:center right;
-  border:1px solid #333;
-}
+.about{margin:38px;padding:55px 35px;min-height:300px;background:linear-gradient(90deg,#070707 0%,rgba(7,7,7,.86) 45%,rgba(7,7,7,.25) 100%),url('/wheel-shop.jpg');background-size:cover;background-position:center right;border:1px solid #333}
 .about h2{font-size:42px}
 .about p{max-width:560px;color:#ddd;line-height:1.6}
 .red{color:#e4001b!important;text-transform:uppercase;font-weight:900}
 
-footer{
-  display:grid;
-  grid-template-columns:1.5fr 1fr 1fr;
-  gap:30px;
-  padding:35px;
-  border-top:1px solid #333;
-  background:#050505;
-  color:#bbb;
-}
+footer{display:grid;grid-template-columns:1.5fr 1fr 1fr;gap:30px;padding:35px;border-top:1px solid #333;background:#050505;color:#bbb}
 .footerLogo{width:240px}
 footer h4{color:white;text-transform:uppercase}
 .copy{grid-column:1/-1;color:#888;font-size:13px}
 
-.successPage{
-  min-height:100vh;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  background:
-    linear-gradient(rgba(0,0,0,.82),rgba(0,0,0,.92)),
-    url('/wheel-hero.jpg');
-  background-size:cover;
-}
-.successCard{
-  max-width:620px;
-  width:92%;
-  text-align:center;
-  background:#0b0b0b;
-  border:1px solid #333;
-  border-radius:14px;
-  padding:45px;
-}
+.successPage{min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(rgba(0,0,0,.82),rgba(0,0,0,.92)),url('/wheel-hero.jpg');background-size:cover}
+.successCard{max-width:620px;width:92%;text-align:center;background:#0b0b0b;border:1px solid #333;border-radius:14px;padding:45px}
 .successLogo{width:280px;margin-bottom:25px}
-.checkmark{
-  width:86px;
-  height:86px;
-  border:3px solid #e4001b;
-  border-radius:50%;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  margin:0 auto 25px;
-  font-size:48px;
-}
+.checkmark{width:86px;height:86px;border:3px solid #e4001b;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 25px;font-size:48px}
 .successCard h1{font-size:46px}
 .successCard h1 span{color:#e4001b}
-.bookingRef{
-  border:1px solid #333;
-  padding:24px;
-  margin:28px 0;
-  background:#050505;
-}
+.bookingRef{border:1px solid #333;padding:24px;margin:28px 0;background:#050505}
 .bookingRef small{display:block;color:#aaa;letter-spacing:2px}
 .bookingRef strong{display:block;color:#e4001b;font-size:34px;margin-top:8px}
 .summary{text-align:left;background:#111;padding:22px;border-radius:8px;margin-bottom:25px}
 
 @media(max-width:850px){
-  .header{height:auto;flex-direction:column;gap:20px;padding:20px}
-  nav{flex-wrap:wrap;justify-content:center}
-  h1{font-size:44px}
-  .features,.booking,form,footer{grid-template-columns:1fr}
-  .features div,.workflow div{grid-template-columns:1fr;text-align:center}
-  .features p,.workflow p{grid-column:1}
-  .booking,.about{margin:18px;padding:24px}
+.header{height:auto;flex-direction:column;gap:20px;padding:20px}
+nav{flex-wrap:wrap;justify-content:center}
+h1{font-size:44px}
+.features,.booking,form,footer{grid-template-columns:1fr}
+.features div,.workflow div{grid-template-columns:1fr;text-align:center}
+.features p,.workflow p{grid-column:1}
+.booking,.about{margin:18px;padding:24px}
 }
 `;
