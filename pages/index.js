@@ -46,9 +46,9 @@ export default function Home() {
       } else {
 alert(result.error || "Something went wrong. Please try again.");
       }
-    } catch (error) {
-alert(result.error || "Something went wrong. Please try again.");
-    }
+  } catch (error) {
+  alert(error.message || "Something went wrong. Please try again.");
+}
 
     setLoading(false);
   };
