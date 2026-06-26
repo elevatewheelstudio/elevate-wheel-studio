@@ -9,6 +9,8 @@ export default function Home() {
     wheelPosition: "",
     advisorName: "",
     advisorEmail: "",
+    requestedBy: "Advisor",
+    dealershipDepartment: "Service",
     repairOrder: "",
     vehicleTag: "",
     vehicle: "",
@@ -44,11 +46,11 @@ export default function Home() {
         setSubmitted(true);
         window.scrollTo({ top: 0, behavior: "smooth" });
       } else {
-alert(result.error || "Something went wrong. Please try again.");
+        alert(result.error || "Something went wrong. Please try again.");
       }
-  } catch (error) {
-  alert(error.message || "Something went wrong. Please try again.");
-}
+    } catch (error) {
+      alert(error.message || "Something went wrong. Please try again.");
+    }
 
     setLoading(false);
   };
@@ -74,6 +76,8 @@ alert(result.error || "Something went wrong. Please try again.");
             <p><b>Date:</b> {form.appointmentDate}</p>
             <p><b>Time:</b> {form.appointmentTime}</p>
             <p><b>Dealership:</b> {form.dealership}</p>
+            <p><b>Requested By:</b> {form.requestedBy}</p>
+            <p><b>Department:</b> {form.dealershipDepartment}</p>
             <p><b>Vehicle:</b> {form.vehicle}</p>
           </div>
 
@@ -163,14 +167,29 @@ alert(result.error || "Something went wrong. Please try again.");
               <option>All Wheels</option>
             </select>
 
-            <input name="advisorName" placeholder="Advisor Name *" value={form.advisorName} onChange={update} required />
-            <input name="advisorEmail" type="email" placeholder="Advisor Email *" value={form.advisorEmail} onChange={update} required />
+            <input name="advisorName" placeholder="Advisor / BDC Name *" value={form.advisorName} onChange={update} required />
+            <input name="advisorEmail" type="email" placeholder="Advisor / BDC Email *" value={form.advisorEmail} onChange={update} required />
+
+            <select name="requestedBy" value={form.requestedBy} onChange={update} required>
+              <option value="Advisor">Appointment Requested By: Advisor</option>
+              <option value="BDC">Appointment Requested By: BDC</option>
+              <option value="Service Manager">Appointment Requested By: Service Manager</option>
+              <option value="Customer">Appointment Requested By: Customer</option>
+            </select>
+
+            <select name="dealershipDepartment" value={form.dealershipDepartment} onChange={update} required>
+              <option value="Service">Dealership Department: Service</option>
+              <option value="BDC">Dealership Department: BDC</option>
+              <option value="Sales">Dealership Department: Sales</option>
+              <option value="Management">Dealership Department: Management</option>
+            </select>
+
             <input name="repairOrder" placeholder="Repair Order (RO#) *" value={form.repairOrder} onChange={update} required />
             <input name="vehicleTag" placeholder="Vehicle Tag# *" value={form.vehicleTag} onChange={update} required />
             <input name="vehicle" placeholder="Vehicle Make / Model *" value={form.vehicle} onChange={update} required />
             <input name="vin" placeholder="VIN#" value={form.vin} onChange={update} />
             <input name="customerName" placeholder="Customer Name *" value={form.customerName} onChange={update} required />
-            <input name="customerEmail" type="email" placeholder="Customer Email *" value={form.customerEmail} onChange={update} required />
+            <input name="customerEmail" type="email" placeholder="Customer Email (Optional)" value={form.customerEmail} onChange={update} />
 
             <textarea name="notes" placeholder="Notes / Special Instructions" value={form.notes} onChange={update}></textarea>
 
