@@ -63,10 +63,10 @@ export default function Home() {
           <div className="checkmark">✓</div>
           <h1>Appointment <span>Booked!</span></h1>
           <p>
-            Thank you for choosing Elevate Wheel Studio. We have received your
-            appointment request and sent a confirmation email.
-          </p>
-
+  Thank you for choosing Elevate Wheel Studio. We have received your
+  appointment request. A confirmation email has been sent to the advisor
+  or representative listed on the booking.
+</p>
           <div className="bookingRef">
             <small>BOOKING REFERENCE</small>
             <strong>{bookingRef}</strong>
