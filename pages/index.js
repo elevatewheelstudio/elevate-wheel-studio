@@ -1,3 +1,8 @@
+import { useState } from "react";
+
+export default function Home() {
+  const [form, setForm] = useState({
+    dealership: "",
 appointmentDate: "",
     appointmentTime: "",
     wheelQuantity: "",
