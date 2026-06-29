@@ -1,4 +1,5 @@
 import { Resend } from "resend";
+import { createClient } from "@supabase/supabase-js";
 import { PDFDocument, StandardFonts, rgb } from "pdf-lib";
 
 async function createInvoicePDF(data) {
@@ -98,8 +99,21 @@ async function createInvoicePDF(data) {
     color: rgb(0.89, 0, 0.1),
   });
 
-  page.drawText("Description", { x: 60, y, size: 11, font: bold, color: rgb(1, 1, 1) });
-  page.drawText("Amount", { x: 490, y, size: 11, font: bold, color: rgb(1, 1, 1) });
+  page.drawText("Description", {
+    x: 60,
+    y,
+    size: 11,
+    font: bold,
+    color: rgb(1, 1, 1),
+  });
+
+  page.drawText("Amount", {
+    x: 490,
+    y,
+    size: 11,
+    font: bold,
+    color: rgb(1, 1, 1),
+  });
 
   y -= 32;
 
@@ -115,8 +129,10 @@ async function createInvoicePDF(data) {
 
   page.drawText(`Subtotal: ${money(data.subtotal)}`, { x: 390, y, size: 11, font });
   y -= 18;
+
   page.drawText(`HST 13%: ${money(data.hst)}`, { x: 390, y, size: 11, font });
   y -= 22;
+
   page.drawText(`Total: ${money(data.total)}`, {
     x: 390,
     y,
@@ -157,7 +173,20 @@ export default async function handler(req, res) {
     });
   }
 
+  if (!process.env.SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
+    return res.status(500).json({
+      success: false,
+      error: "Supabase environment variables are missing in Vercel.",
+    });
+  }
+
   const resend = new Resend(apiKey);
+
+  const supabase = createClient(
+    process.env.SUPABASE_URL,
+    process.env.SUPABASE_SERVICE_ROLE_KEY
+  );
+
   const data = req.body || {};
 
   if (!data.advisorEmail) {
@@ -206,6 +235,35 @@ export default async function handler(req, res) {
         },
       ],
     });
+
+    const { error: supabaseError } = await supabase.from("invoices").insert([
+      {
+        invoice_number: data.invoiceNumber || "",
+        status: data.invoiceStatus || "Sent",
+        advisor_email: data.advisorEmail || "",
+        customer_name: data.customerName || "",
+        dealership: data.dealership || "",
+        repair_order: data.repairOrder || "",
+        vehicle_tag: data.vehicleTag || "",
+        vehicle: data.vehicle || "",
+        vin: data.vin || "",
+        service_type: data.serviceType || "",
+        labour: Number(data.labour || 0),
+        materials: Number(data.materials || 0),
+        subtotal: Number(data.subtotal || 0),
+        hst: Number(data.hst || 0),
+        total: Number(data.total || 0),
+        notes: data.notes || "",
+        sent_at: new Date().toISOString(),
+      },
+    ]);
+
+    if (supabaseError) {
+      return res.status(500).json({
+        success: false,
+        error: `Invoice email sent, but invoice history failed: ${supabaseError.message}`,
+      });
+    }
 
     return res.status(200).json({
       success: true,
