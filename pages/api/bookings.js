@@ -1,191 +1,189 @@
-import { Resend } from "resend";
-import { createClient } from "@supabase/supabase-js";
+import { useEffect, useMemo, useState } from "react";
 
-export default async function handler(req, res) {
-  if (req.method !== "POST") {
-    return res.status(405).json({
-      success: false,
-      error: "Method not allowed",
-    });
-  }
+export default function BookingsDashboard() {
+  const [bookings, setBookings] = useState([]);
+  const [search, setSearch] = useState("");
+  const [loading, setLoading] = useState(true);
 
-  const apiKey = process.env.RESEND_API_KEY;
+  useEffect(() => {
+    async function loadBookings() {
+      try {
+        const res = await fetch("/api/bookings");
+        const result = await res.json();
 
-  if (!apiKey) {
-    return res.status(500).json({
-      success: false,
-      error: "RESEND_API_KEY is missing in Vercel. Check Environment Variables and redeploy.",
-    });
-  }
+        if (result.success) {
+          setBookings(result.bookings || []);
+        } else {
+          alert(result.error || "Failed to load bookings.");
+        }
+      } catch (error) {
+        alert(error.message || "Failed to load bookings.");
+      }
 
-  const resend = new Resend(apiKey);
-  const data = req.body || {};
-  const bookingRef = `EWS-${Date.now()}`;
-  const bookingStatus = "New";
-  const supabase = createClient(
-    process.env.SUPABASE_URL,
-    process.env.SUPABASE_SERVICE_ROLE_KEY
+      setLoading(false);
+    }
+
+    loadBookings();
+  }, []);
+
+  const filteredBookings = useMemo(() => {
+    const q = search.toLowerCase();
+
+    return bookings.filter((booking) =>
+      [
+        booking.status,
+        booking.customer_name,
+        booking.customer_email,
+        booking.customer_phone,
+        booking.dealership,
+        booking.vehicle,
+        booking.vin,
+        booking.wheel_size,
+        booking.service_type,
+        booking.preferred_date,
+        booking.preferred_time,
+        booking.notes,
+      ]
+        .join(" ")
+        .toLowerCase()
+        .includes(q)
+    );
+  }, [bookings, search]);
+
+  const stats = useMemo(() => {
+    return {
+      total: filteredBookings.length,
+      newBookings: filteredBookings.filter((b) => b.status === "New").length,
+      scheduled: filteredBookings.filter((b) => b.status === "Scheduled").length,
+      completed: filteredBookings.filter((b) => b.status === "Completed").length,
+    };
+  }, [filteredBookings]);
+
+  return (
+    <main className="page">
+      <section className="header">
+        <img src="/logo_transparent (3).png" className="logo" />
+        <h1>Booking Dashboard</h1>
+        <p>Search, review, and manage Elevate Wheel Studio booking requests.</p>
+      </section>
+
+      <section className="stats">
+        <div>
+          <span>Total Bookings</span>
+          <strong>{stats.total}</strong>
+        </div>
+        <div>
+          <span>New</span>
+          <strong>{stats.newBookings}</strong>
+        </div>
+        <div>
+          <span>Scheduled</span>
+          <strong>{stats.scheduled}</strong>
+        </div>
+        <div>
+          <span>Completed</span>
+          <strong>{stats.completed}</strong>
+        </div>
+      </section>
+
+      <section className="toolbar">
+        <input
+          placeholder="Search by customer, dealership, VIN, vehicle, service..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+        />
+      </section>
+
+      <section className="tableWrap">
+        {loading ? (
+          <p className="loading">Loading bookings...</p>
+        ) : (
+          <table>
+            <thead>
+              <tr>
+                <th>Created</th>
+                <th>Status</th>
+                <th>Customer</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Dealership</th>
+                <th>Vehicle</th>
+                <th>VIN</th>
+                <th>Wheel Size</th>
+                <th>Service</th>
+                <th>Date</th>
+                <th>Time</th>
+                <th>Notes</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {filteredBookings.map((booking) => (
+                <tr key={booking.id}>
+                  <td>
+                    {booking.created_at
+                      ? new Date(booking.created_at).toLocaleDateString("en-CA")
+                      : "-"}
+                  </td>
+                  <td>
+                    <span className={`status ${booking.status?.toLowerCase()}`}>
+                      {booking.status || "New"}
+                    </span>
+                  </td>
+                  <td>{booking.customer_name || "-"}</td>
+                  <td>{booking.customer_email || "-"}</td>
+                  <td>{booking.customer_phone || "-"}</td>
+                  <td>{booking.dealership || "-"}</td>
+                  <td>{booking.vehicle || "-"}</td>
+                  <td>{booking.vin || "-"}</td>
+                  <td>{booking.wheel_size || "-"}</td>
+                  <td>{booking.service_type || "-"}</td>
+                  <td>{booking.preferred_date || "-"}</td>
+                  <td>{booking.preferred_time || "-"}</td>
+                  <td>{booking.notes || "-"}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+
+        {!loading && filteredBookings.length === 0 && (
+          <p className="loading">No bookings found.</p>
+        )}
+      </section>
+
+      <style jsx>{styles}</style>
+    </main>
   );
-
-  const { error: bookingSaveError } = await supabase
-    .from("bookings")
-    .insert([
-      {
-        status: bookingStatus,
-        customer_name: data.requestedBy || "",
-        customer_email: data.customerEmail || "",
-        customer_phone: data.customerPhone || "",
-        dealership: data.dealershipDepartment || "",
-        vehicle: data.vehicle || "",
-        vin: data.vin || "",
-        wheel_size: data.wheelSize || "",
-        service_type: data.serviceType || "",
-        preferred_date: data.appointmentDate || null,
-        preferred_time: data.appointmentTime || "",
-        notes: data.notes || "",
-      },
-    ]);
-
-  if (bookingSaveError) {
-    return res.status(500).json({
-      success: false,
-      error: bookingSaveError.message,
-    });
-  }
-
-  try {
-    await resend.emails.send({
-      from: "Elevate Wheel Studio <info@elevatewheelstudio.com>",
-      to: "info@elevatewheelstudio.com",
-      subject: `New Booking Received - ${bookingRef}`,
-      html: `
-        <h1>New Booking Received</h1>
-        <p><strong>Booking Reference:</strong> ${bookingRef}</p>
-        <p><strong>Booking Status:</strong> ${bookingStatus}</p>
-
-        <hr />
-
-        <h2>Request Details</h2>
-        <p><strong>Appointment Requested By:</strong> ${data.requestedBy || "Not provided"}</p>
-        <p><strong>Dealership Department:</strong> ${data.dealershipDepartment || "Not provided"}</p>
-
-        <hr />
-
-        <h2>Appointment Details</h2>
-        <p><strong>Dealership:</strong> ${data.dealership || ""}</p>
-        <p><strong>Date:</strong> ${data.appointmentDate || ""}</p>
-        <p><strong>Time:</strong> ${data.appointmentTime || ""}</p>
-
-        <hr />
-
-        <h2>Advisor / BDC Details</h2>
-        <p><strong>Advisor / BDC Name:</strong> ${data.advisorName || ""}</p>
-        <p><strong>Advisor / BDC Email:</strong> ${data.advisorEmail || ""}</p>
-
-        <hr />
-
-        <h2>Customer Details</h2>
-        <p><strong>Customer:</strong> ${data.customerName || ""}</p>
-        <p><strong>Customer Email:</strong> ${data.customerEmail || "Not provided"}</p>
-
-        <hr />
-
-        <h2>Vehicle Details</h2>
-        <p><strong>Vehicle:</strong> ${data.vehicle || ""}</p>
-        <p><strong>VIN:</strong> ${data.vin || ""}</p>
-        <p><strong>Repair Order:</strong> ${data.repairOrder || ""}</p>
-        <p><strong>Vehicle Tag:</strong> ${data.vehicleTag || ""}</p>
-
-        <hr />
-
-        <h2>Wheel Details</h2>
-        <p><strong>Service Type:</strong> ${data.serviceType || ""}</p>
-        <p><strong>Wheel Quantity:</strong> ${data.wheelQuantity || ""}</p>
-        <p><strong>Wheel Position:</strong> ${data.wheelPosition || ""}</p>
-
-        <hr />
-
-        <h2>Notes</h2>
-        <p>${data.notes || "None"}</p>
-      `,
-    });
-
-    if (data.advisorEmail) {
-      await resend.emails.send({
-        from: "Elevate Wheel Studio <info@elevatewheelstudio.com>",
-        to: data.advisorEmail,
-        subject: `Booking Request Received - ${bookingRef}`,
-        html: `
-          <div style="font-family:Arial;background:#050505;color:#ffffff;padding:30px;">
-            <div style="max-width:650px;margin:auto;background:#111111;border:1px solid #333333;padding:30px;">
-              <h1 style="color:#e4001b;">Booking Request Received</h1>
-              <p>Hello ${data.advisorName || "there"},</p>
-              <p>Your booking request has been received by Elevate Wheel Studio.</p>
-
-              <h2>Booking Reference</h2>
-              <h1 style="color:#e4001b;">${bookingRef}</h1>
-              <p><strong>Booking Status:</strong> ${bookingStatus}</p>
-
-              <p><strong>Appointment Requested By:</strong> ${data.requestedBy || "Not provided"}</p>
-              <p><strong>Dealership Department:</strong> ${data.dealershipDepartment || "Not provided"}</p>
-              <p><strong>Dealership:</strong> ${data.dealership || ""}</p>
-              <p><strong>Date:</strong> ${data.appointmentDate || ""}</p>
-              <p><strong>Time:</strong> ${data.appointmentTime || ""}</p>
-              <p><strong>Customer:</strong> ${data.customerName || ""}</p>
-              <p><strong>Vehicle:</strong> ${data.vehicle || ""}</p>
-              <p><strong>Service Type:</strong> ${data.serviceType || ""}</p>
-              <p><strong>VIN:</strong> ${data.vin || ""}</p>
-
-              <p>We will review this request and contact you if any additional information is required.</p>
-
-              <p><strong>Elevate Wheel Studio</strong></p>
-              <p>info@elevatewheelstudio.com</p>
-            </div>
-          </div>
-        `,
-      });
-    }
-
-    if (data.customerEmail) {
-      await resend.emails.send({
-        from: "Elevate Wheel Studio <info@elevatewheelstudio.com>",
-        to: data.customerEmail,
-        subject: `Appointment Request Received - ${bookingRef}`,
-        html: `
-          <div style="font-family:Arial;background:#050505;color:#ffffff;padding:30px;">
-            <div style="max-width:650px;margin:auto;background:#111111;border:1px solid #333333;padding:30px;">
-              <h1 style="color:#e4001b;">Appointment Request Received</h1>
-              <p>Hello ${data.customerName || "there"},</p>
-              <p>Thank you for choosing Elevate Wheel Studio. Your booking request has been received.</p>
-
-              <h2>Booking Reference</h2>
-              <h1 style="color:#e4001b;">${bookingRef}</h1>
-              <p><strong>Booking Status:</strong> ${bookingStatus}</p>
-
-              <p><strong>Date:</strong> ${data.appointmentDate || ""}</p>
-              <p><strong>Time:</strong> ${data.appointmentTime || ""}</p>
-              <p><strong>Dealership:</strong> ${data.dealership || ""}</p>
-              <p><strong>Vehicle:</strong> ${data.vehicle || ""}</p>
-              <p><strong>Service Type:</strong> ${data.serviceType || ""}</p>
-
-              <p>We will review your booking and contact you shortly.</p>
-
-              <p><strong>Elevate Wheel Studio</strong></p>
-              <p>info@elevatewheelstudio.com</p>
-            </div>
-          </div>
-        `,
-      });
-    }
-
-    return res.status(200).json({
-      success: true,
-      bookingRef,
-    });
-  } catch (error) {
-    return res.status(500).json({
-      success: false,
-      error: error.message,
-    });
-  }
 }
+
+const styles = `
+*{box-sizing:border-box}
+.page{background:#050505;color:white;min-height:100vh;font-family:Arial,Helvetica,sans-serif;padding:30px}
+.header{max-width:1500px;margin:0 auto 25px}
+.logo{width:240px}
+h1{font-size:44px;margin:20px 0 8px;color:#e4001b;text-transform:uppercase}
+p{color:#ddd}
+.stats{max-width:1500px;margin:0 auto 25px;display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.stats div{background:#0b0b0b;border:1px solid #333;padding:22px;border-radius:10px}
+.stats span{display:block;color:#aaa;margin-bottom:8px}
+.stats strong{font-size:28px;color:white}
+.toolbar{max-width:1500px;margin:0 auto 20px}
+input{width:100%;background:#111;border:1px solid #333;color:white;padding:16px;border-radius:8px;font-size:16px}
+.tableWrap{max-width:1500px;margin:0 auto;background:#0b0b0b;border:1px solid #333;border-radius:10px;overflow:auto}
+table{width:100%;border-collapse:collapse;min-width:1600px}
+th{background:#111;color:#e4001b;text-align:left;padding:14px;border-bottom:1px solid #333;font-size:13px;text-transform:uppercase}
+td{padding:14px;border-bottom:1px solid #222;color:#eee;font-size:14px;vertical-align:top}
+tr:hover td{background:#111}
+.status{display:inline-block;padding:6px 10px;border-radius:999px;background:#333;color:white;font-weight:bold;font-size:12px}
+.status.new{background:#1f4f9f}
+.status.contacted{background:#805ad5}
+.status.scheduled{background:#b7791f}
+.status.completed{background:#0f7b3f}
+.status.cancelled{background:#9f1f1f}
+.loading{padding:30px;color:#ccc}
+@media(max-width:900px){
+  .stats{grid-template-columns:1fr}
+  h1{font-size:34px}
+}
+`;
