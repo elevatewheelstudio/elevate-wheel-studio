@@ -1,4 +1,144 @@
 import { Resend } from "resend";
+import { PDFDocument, StandardFonts, rgb } from "pdf-lib";
+
+async function createInvoicePDF(data) {
+  const pdfDoc = await PDFDocument.create();
+  const page = pdfDoc.addPage([612, 792]);
+
+  const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
+  const bold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
+
+  const money = (amount) =>
+    Number(amount || 0).toLocaleString("en-CA", {
+      style: "currency",
+      currency: "CAD",
+    });
+
+  let y = 740;
+
+  page.drawText("ELEVATE WHEEL STUDIO", {
+    x: 50,
+    y,
+    size: 24,
+    font: bold,
+    color: rgb(0.89, 0, 0.1),
+  });
+
+  y -= 28;
+
+  page.drawText("1001651472 Ontario Inc. o/a Elevate Wheel Studio", {
+    x: 50,
+    y,
+    size: 10,
+    font,
+  });
+
+  y -= 14;
+
+  page.drawText("Ontario, Canada | info@elevatewheelstudio.com", {
+    x: 50,
+    y,
+    size: 10,
+    font,
+  });
+
+  y -= 45;
+
+  page.drawText("INVOICE", {
+    x: 50,
+    y,
+    size: 28,
+    font: bold,
+  });
+
+  page.drawText(data.invoiceNumber || "", {
+    x: 400,
+    y: y + 8,
+    size: 12,
+    font: bold,
+  });
+
+  page.drawText(`Status: ${data.invoiceStatus || ""}`, {
+    x: 400,
+    y: y - 8,
+    size: 10,
+    font,
+  });
+
+  y -= 45;
+
+  page.drawText("Bill To", { x: 50, y, size: 14, font: bold });
+  page.drawText("Vehicle Details", { x: 330, y, size: 14, font: bold });
+
+  y -= 20;
+
+  page.drawText(`Customer: ${data.customerName || "-"}`, { x: 50, y, size: 10, font });
+  page.drawText(`Vehicle: ${data.vehicle || "-"}`, { x: 330, y, size: 10, font });
+
+  y -= 16;
+
+  page.drawText(`Dealership: ${data.dealership || "-"}`, { x: 50, y, size: 10, font });
+  page.drawText(`VIN: ${data.vin || "-"}`, { x: 330, y, size: 10, font });
+
+  y -= 16;
+
+  page.drawText(`RO#: ${data.repairOrder || "-"}`, { x: 330, y, size: 10, font });
+
+  y -= 16;
+
+  page.drawText(`Tag#: ${data.vehicleTag || "-"}`, { x: 330, y, size: 10, font });
+
+  y -= 45;
+
+  page.drawRectangle({
+    x: 50,
+    y: y - 8,
+    width: 512,
+    height: 25,
+    color: rgb(0.89, 0, 0.1),
+  });
+
+  page.drawText("Description", { x: 60, y, size: 11, font: bold, color: rgb(1, 1, 1) });
+  page.drawText("Amount", { x: 490, y, size: 11, font: bold, color: rgb(1, 1, 1) });
+
+  y -= 32;
+
+  page.drawText(data.serviceType || "Labour", { x: 60, y, size: 10, font });
+  page.drawText(money(data.labour), { x: 485, y, size: 10, font });
+
+  y -= 24;
+
+  page.drawText("Materials / Supplies", { x: 60, y, size: 10, font });
+  page.drawText(money(data.materials), { x: 485, y, size: 10, font });
+
+  y -= 50;
+
+  page.drawText(`Subtotal: ${money(data.subtotal)}`, { x: 390, y, size: 11, font });
+  y -= 18;
+  page.drawText(`HST 13%: ${money(data.hst)}`, { x: 390, y, size: 11, font });
+  y -= 22;
+  page.drawText(`Total: ${money(data.total)}`, {
+    x: 390,
+    y,
+    size: 16,
+    font: bold,
+    color: rgb(0.89, 0, 0.1),
+  });
+
+  y -= 55;
+
+  page.drawText("Notes", { x: 50, y, size: 14, font: bold });
+  y -= 18;
+
+  page.drawText(data.notes || "Thank you for choosing Elevate Wheel Studio.", {
+    x: 50,
+    y,
+    size: 10,
+    font,
+  });
+
+  return await pdfDoc.save();
+}
 
 export default async function handler(req, res) {
   if (req.method !== "POST") {
@@ -13,7 +153,7 @@ export default async function handler(req, res) {
   if (!apiKey) {
     return res.status(500).json({
       success: false,
-      error: "RESEND_API_KEY is missing in Vercel. Check Environment Variables and redeploy.",
+      error: "RESEND_API_KEY is missing in Vercel.",
     });
   }
 
@@ -34,85 +174,37 @@ export default async function handler(req, res) {
     });
 
   try {
+    const pdfBytes = await createInvoicePDF(data);
+    const pdfBase64 = Buffer.from(pdfBytes).toString("base64");
+
     await resend.emails.send({
       from: "Elevate Wheel Studio <info@elevatewheelstudio.com>",
       to: data.advisorEmail,
       cc: "info@elevatewheelstudio.com",
       subject: `Invoice ${data.invoiceNumber || ""} - Elevate Wheel Studio`,
       html: `
-        <div style="font-family:Arial;background:#050505;color:#ffffff;padding:30px;">
-          <div style="max-width:750px;margin:auto;background:#111111;border:1px solid #333333;padding:30px;">
-            <h1 style="color:#e4001b;margin-bottom:5px;">Elevate Wheel Studio Invoice</h1>
-            <p>Please see the invoice details below.</p>
+        <div style="font-family:Arial;padding:25px;">
+          <h1 style="color:#e4001b;">Elevate Wheel Studio Invoice</h1>
+          <p>Please find the attached PDF invoice.</p>
 
-            <hr style="border:0;border-top:1px solid #333333;margin:25px 0;" />
+          <p><strong>Invoice:</strong> ${data.invoiceNumber || ""}</p>
+          <p><strong>Customer:</strong> ${data.customerName || ""}</p>
+          <p><strong>Dealership:</strong> ${data.dealership || ""}</p>
+          <p><strong>Vehicle:</strong> ${data.vehicle || ""}</p>
+          <p><strong>RO#:</strong> ${data.repairOrder || ""}</p>
+          <p><strong>Service:</strong> ${data.serviceType || ""}</p>
+          <p><strong>Total:</strong> ${money(data.total)}</p>
 
-            <h2 style="color:#ffffff;">Invoice Details</h2>
-            <p><strong>Invoice Number:</strong> ${data.invoiceNumber || ""}</p>
-            <p><strong>Invoice Status:</strong> ${data.invoiceStatus || ""}</p>
-
-            <hr style="border:0;border-top:1px solid #333333;margin:25px 0;" />
-
-            <h2 style="color:#ffffff;">Customer / Dealership</h2>
-            <p><strong>Customer Name:</strong> ${data.customerName || ""}</p>
-            <p><strong>Dealership:</strong> ${data.dealership || ""}</p>
-
-            <hr style="border:0;border-top:1px solid #333333;margin:25px 0;" />
-
-            <h2 style="color:#ffffff;">Vehicle Details</h2>
-            <p><strong>Vehicle:</strong> ${data.vehicle || ""}</p>
-            <p><strong>VIN:</strong> ${data.vin || ""}</p>
-            <p><strong>Repair Order:</strong> ${data.repairOrder || ""}</p>
-            <p><strong>Vehicle Tag:</strong> ${data.vehicleTag || ""}</p>
-            <p><strong>Service Type:</strong> ${data.serviceType || ""}</p>
-
-            <hr style="border:0;border-top:1px solid #333333;margin:25px 0;" />
-
-            <h2 style="color:#ffffff;">Charges</h2>
-
-            <table style="width:100%;border-collapse:collapse;margin-top:15px;">
-              <tr>
-                <th style="text-align:left;background:#e4001b;color:#ffffff;padding:12px;">Description</th>
-                <th style="text-align:right;background:#e4001b;color:#ffffff;padding:12px;">Amount</th>
-              </tr>
-              <tr>
-                <td style="padding:12px;border-bottom:1px solid #333333;">${data.serviceType || "Labour"}</td>
-                <td style="padding:12px;border-bottom:1px solid #333333;text-align:right;">${money(data.labour)}</td>
-              </tr>
-              <tr>
-                <td style="padding:12px;border-bottom:1px solid #333333;">Materials / Supplies</td>
-                <td style="padding:12px;border-bottom:1px solid #333333;text-align:right;">${money(data.materials)}</td>
-              </tr>
-            </table>
-
-            <div style="max-width:320px;margin-left:auto;margin-top:25px;">
-              <p style="display:flex;justify-content:space-between;">
-                <strong>Subtotal:</strong>
-                <span>${money(data.subtotal)}</span>
-              </p>
-              <p style="display:flex;justify-content:space-between;">
-                <strong>HST (Ontario 13%):</strong>
-                <span>${money(data.hst)}</span>
-              </p>
-              <p style="display:flex;justify-content:space-between;font-size:22px;color:#e4001b;">
-                <strong>Total:</strong>
-                <strong>${money(data.total)}</strong>
-              </p>
-            </div>
-
-            <hr style="border:0;border-top:1px solid #333333;margin:25px 0;" />
-
-            <h2 style="color:#ffffff;">Notes</h2>
-            <p>${data.notes || "Thank you for choosing Elevate Wheel Studio."}</p>
-
-            <hr style="border:0;border-top:1px solid #333333;margin:25px 0;" />
-
-            <p><strong>1001651472 Ontario Inc.</strong></p>
-            <p>o/a Elevate Wheel Studio</p>
-            <p>info@elevatewheelstudio.com</p>
-          </div>
+          <p>Thank you,</p>
+          <p><strong>Elevate Wheel Studio</strong></p>
         </div>
       `,
+      attachments: [
+        {
+          filename: `${data.invoiceNumber || "invoice"}.pdf`,
+          content: pdfBase64,
+        },
+      ],
     });
 
     return res.status(200).json({
