@@ -1,4 +1,5 @@
 import { Resend } from "resend";
+import { createClient } from "@supabase/supabase-js";
 
 export default async function handler(req, res) {
   if (req.method !== "POST") {
@@ -21,6 +22,36 @@ export default async function handler(req, res) {
   const data = req.body || {};
   const bookingRef = `EWS-${Date.now()}`;
   const bookingStatus = "New";
+  const supabase = createClient(
+    process.env.SUPABASE_URL,
+    process.env.SUPABASE_SERVICE_ROLE_KEY
+  );
+
+  const { error: bookingSaveError } = await supabase
+    .from("bookings")
+    .insert([
+      {
+        status: bookingStatus,
+        customer_name: data.requestedBy || "",
+        customer_email: data.customerEmail || "",
+        customer_phone: data.customerPhone || "",
+        dealership: data.dealershipDepartment || "",
+        vehicle: data.vehicle || "",
+        vin: data.vin || "",
+        wheel_size: data.wheelSize || "",
+        service_type: data.serviceType || "",
+        preferred_date: data.appointmentDate || null,
+        preferred_time: data.appointmentTime || "",
+        notes: data.notes || "",
+      },
+    ]);
+
+  if (bookingSaveError) {
+    return res.status(500).json({
+      success: false,
+      error: bookingSaveError.message,
+    });
+  }
 
   try {
     await resend.emails.send({
