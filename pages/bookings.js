@@ -26,6 +26,29 @@ export default function BookingsDashboard() {
     loadBookings();
   }, []);
 
+  const updateStatus = async (id, status) => {
+    const res = await fetch("/api/update-booking-status", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ id, status }),
+    });
+
+    const result = await res.json();
+
+    if (!result.success) {
+      alert(result.error || "Failed to update booking status.");
+      return;
+    }
+
+    setBookings((current) =>
+      current.map((booking) =>
+        booking.id === id ? { ...booking, status } : booking
+      )
+    );
+  };
+
   const filteredBookings = useMemo(() => {
     const q = search.toLowerCase();
 
@@ -54,6 +77,7 @@ export default function BookingsDashboard() {
     return {
       total: filteredBookings.length,
       newBookings: filteredBookings.filter((b) => b.status === "New").length,
+      confirmed: filteredBookings.filter((b) => b.status === "Confirmed").length,
       scheduled: filteredBookings.filter((b) => b.status === "Scheduled").length,
       completed: filteredBookings.filter((b) => b.status === "Completed").length,
     };
@@ -75,6 +99,10 @@ export default function BookingsDashboard() {
         <div>
           <span>New</span>
           <strong>{stats.newBookings}</strong>
+        </div>
+        <div>
+          <span>Confirmed</span>
+          <strong>{stats.confirmed}</strong>
         </div>
         <div>
           <span>Scheduled</span>
@@ -126,9 +154,17 @@ export default function BookingsDashboard() {
                       : "-"}
                   </td>
                   <td>
-                    <span className={`status ${booking.status?.toLowerCase()}`}>
-                      {booking.status || "New"}
-                    </span>
+                    <select
+                      value={booking.status || "New"}
+                      onChange={(e) => updateStatus(booking.id, e.target.value)}
+                    >
+                      <option>New</option>
+                      <option>Contacted</option>
+                      <option>Confirmed</option>
+                      <option>Scheduled</option>
+                      <option>Completed</option>
+                      <option>Cancelled</option>
+                    </select>
                   </td>
                   <td>{booking.customer_name || "-"}</td>
                   <td>{booking.customer_email || "-"}</td>
@@ -164,7 +200,7 @@ const styles = `
 .logo{width:240px}
 h1{font-size:44px;margin:20px 0 8px;color:#e4001b;text-transform:uppercase}
 p{color:#ddd}
-.stats{max-width:1500px;margin:0 auto 25px;display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.stats{max-width:1500px;margin:0 auto 25px;display:grid;grid-template-columns:repeat(5,1fr);gap:16px}
 .stats div{background:#0b0b0b;border:1px solid #333;padding:22px;border-radius:10px}
 .stats span{display:block;color:#aaa;margin-bottom:8px}
 .stats strong{font-size:28px;color:white}
@@ -175,12 +211,7 @@ table{width:100%;border-collapse:collapse;min-width:1600px}
 th{background:#111;color:#e4001b;text-align:left;padding:14px;border-bottom:1px solid #333;font-size:13px;text-transform:uppercase}
 td{padding:14px;border-bottom:1px solid #222;color:#eee;font-size:14px;vertical-align:top}
 tr:hover td{background:#111}
-.status{display:inline-block;padding:6px 10px;border-radius:999px;background:#333;color:white;font-weight:bold;font-size:12px}
-.status.new{background:#1f4f9f}
-.status.contacted{background:#805ad5}
-.status.scheduled{background:#b7791f}
-.status.completed{background:#0f7b3f}
-.status.cancelled{background:#9f1f1f}
+select{background:#111;color:white;border:1px solid #444;border-radius:6px;padding:8px;font-weight:bold}
 .loading{padding:30px;color:#ccc}
 @media(max-width:900px){
   .stats{grid-template-columns:1fr}
