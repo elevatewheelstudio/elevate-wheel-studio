@@ -4,6 +4,7 @@ export default function Invoice() {
   const [invoice, setInvoice] = useState({
     invoiceNumber: `INV-${Date.now()}`,
     invoiceStatus: "Draft",
+    advisorEmail: "",
     customerName: "",
     dealership: "",
     repairOrder: "",
@@ -15,6 +16,8 @@ export default function Invoice() {
     materials: "",
     notes: ""
   });
+
+  const [sending, setSending] = useState(false);
 
   const update = (e) => {
     setInvoice({ ...invoice, [e.target.name]: e.target.value });
@@ -33,12 +36,41 @@ export default function Invoice() {
       currency: "CAD"
     });
 
+  const sendInvoice = async () => {
+    if (!invoice.advisorEmail) {
+      alert("Please enter the advisor email address before sending.");
+      return;
+    }
+
+    setSending(true);
+
+    try {
+      const res = await fetch("/api/send-invoice", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...invoice, subtotal, hst, total })
+      });
+
+      const result = await res.json();
+
+      if (result.success) {
+        alert("Invoice email sent successfully.");
+      } else {
+        alert(result.error || "Invoice email failed to send.");
+      }
+    } catch (error) {
+      alert(error.message || "Invoice email failed to send.");
+    }
+
+    setSending(false);
+  };
+
   return (
     <main className="page">
       <section className="controls">
         <img src="/logo_transparent (3).png" className="logo" />
         <h1>Invoice Generator</h1>
-        <p>Create a professional Elevate Wheel Studio invoice with Ontario HST automatically calculated at 13%.</p>
+        <p>Create and email a professional Elevate Wheel Studio invoice with Ontario HST automatically calculated at 13%.</p>
 
         <div className="formGrid">
           <input name="invoiceNumber" placeholder="Invoice Number" value={invoice.invoiceNumber} onChange={update} />
@@ -49,6 +81,8 @@ export default function Invoice() {
             <option>Paid</option>
             <option>Outstanding</option>
           </select>
+
+          <input name="advisorEmail" type="email" placeholder="Advisor Email *" value={invoice.advisorEmail} onChange={update} />
 
           <input name="customerName" placeholder="Customer Name" value={invoice.customerName} onChange={update} />
           <input name="dealership" placeholder="Dealership" value={invoice.dealership} onChange={update} />
@@ -74,7 +108,13 @@ export default function Invoice() {
           <textarea name="notes" placeholder="Invoice Notes" value={invoice.notes} onChange={update}></textarea>
         </div>
 
-        <button onClick={() => window.print()}>Print / Save as PDF</button>
+        <button onClick={sendInvoice} disabled={sending}>
+          {sending ? "Sending..." : "Send Invoice to Advisor"}
+        </button>
+
+        <button onClick={() => window.print()}>
+          Print / Save as PDF
+        </button>
       </section>
 
       <section className="invoice">
@@ -159,6 +199,7 @@ h1{font-size:42px;margin:20px 0 8px;color:#e4001b;text-transform:uppercase}
 input,select,textarea{background:#111;border:1px solid #333;color:white;padding:16px;border-radius:6px;font-size:16px;width:100%}
 textarea{grid-column:1/-1;min-height:90px}
 button{margin-top:18px;width:100%;background:#e4001b;color:white;border:0;padding:18px;border-radius:6px;text-transform:uppercase;font-weight:900;font-size:16px;cursor:pointer}
+button:disabled{opacity:.75;cursor:not-allowed}
 
 .invoice{max-width:900px;margin:0 auto;background:white;color:#111;padding:45px;border-radius:8px}
 .invoiceHeader{display:flex;justify-content:space-between;align-items:center;border-bottom:4px solid #e4001b;padding-bottom:20px}
