@@ -20,7 +20,7 @@ export default async function handler(req, res) {
   const resend = new Resend(apiKey);
   const data = req.body || {};
   const bookingRef = `EWS-${Date.now()}`;
-const bookingStatus = "New";
+  const bookingStatus = "New";
 
   try {
     await resend.emails.send({
@@ -29,7 +29,8 @@ const bookingStatus = "New";
       subject: `New Booking Received - ${bookingRef}`,
       html: `
         <h1>New Booking Received</h1>
-    <p><strong>Booking Status:</strong> ${bookingStatus}</p>
+        <p><strong>Booking Reference:</strong> ${bookingRef}</p>
+        <p><strong>Booking Status:</strong> ${bookingStatus}</p>
 
         <hr />
 
@@ -67,6 +68,7 @@ const bookingStatus = "New";
         <hr />
 
         <h2>Wheel Details</h2>
+        <p><strong>Service Type:</strong> ${data.serviceType || ""}</p>
         <p><strong>Wheel Quantity:</strong> ${data.wheelQuantity || ""}</p>
         <p><strong>Wheel Position:</strong> ${data.wheelPosition || ""}</p>
 
@@ -90,6 +92,7 @@ const bookingStatus = "New";
               <p>Your booking request has been received by Elevate Wheel Studio.</p>
 
               <h2>Booking Reference</h2>
+              <h1 style="color:#e4001b;">${bookingRef}</h1>
               <p><strong>Booking Status:</strong> ${bookingStatus}</p>
 
               <p><strong>Appointment Requested By:</strong> ${data.requestedBy || "Not provided"}</p>
@@ -99,6 +102,7 @@ const bookingStatus = "New";
               <p><strong>Time:</strong> ${data.appointmentTime || ""}</p>
               <p><strong>Customer:</strong> ${data.customerName || ""}</p>
               <p><strong>Vehicle:</strong> ${data.vehicle || ""}</p>
+              <p><strong>Service Type:</strong> ${data.serviceType || ""}</p>
               <p><strong>VIN:</strong> ${data.vin || ""}</p>
 
               <p>We will review this request and contact you if any additional information is required.</p>
@@ -124,12 +128,14 @@ const bookingStatus = "New";
               <p>Thank you for choosing Elevate Wheel Studio. Your booking request has been received.</p>
 
               <h2>Booking Reference</h2>
+              <h1 style="color:#e4001b;">${bookingRef}</h1>
               <p><strong>Booking Status:</strong> ${bookingStatus}</p>
 
               <p><strong>Date:</strong> ${data.appointmentDate || ""}</p>
               <p><strong>Time:</strong> ${data.appointmentTime || ""}</p>
               <p><strong>Dealership:</strong> ${data.dealership || ""}</p>
               <p><strong>Vehicle:</strong> ${data.vehicle || ""}</p>
+              <p><strong>Service Type:</strong> ${data.serviceType || ""}</p>
 
               <p>We will review your booking and contact you shortly.</p>
 
