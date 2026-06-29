@@ -20,6 +20,7 @@ export default async function handler(req, res) {
   const resend = new Resend(apiKey);
   const data = req.body || {};
   const bookingRef = `EWS-${Date.now()}`;
+const bookingStatus = "New";
 
   try {
     await resend.emails.send({
@@ -28,7 +29,7 @@ export default async function handler(req, res) {
       subject: `New Booking Received - ${bookingRef}`,
       html: `
         <h1>New Booking Received</h1>
-        <p><strong>Booking Reference:</strong> ${bookingRef}</p>
+    <p><strong>Booking Status:</strong> ${bookingStatus}</p>
 
         <hr />
 
@@ -89,7 +90,7 @@ export default async function handler(req, res) {
               <p>Your booking request has been received by Elevate Wheel Studio.</p>
 
               <h2>Booking Reference</h2>
-              <h1 style="color:#e4001b;">${bookingRef}</h1>
+              <p><strong>Booking Status:</strong> ${bookingStatus}</p>
 
               <p><strong>Appointment Requested By:</strong> ${data.requestedBy || "Not provided"}</p>
               <p><strong>Dealership Department:</strong> ${data.dealershipDepartment || "Not provided"}</p>
@@ -123,7 +124,7 @@ export default async function handler(req, res) {
               <p>Thank you for choosing Elevate Wheel Studio. Your booking request has been received.</p>
 
               <h2>Booking Reference</h2>
-              <h1 style="color:#e4001b;">${bookingRef}</h1>
+              <p><strong>Booking Status:</strong> ${bookingStatus}</p>
 
               <p><strong>Date:</strong> ${data.appointmentDate || ""}</p>
               <p><strong>Time:</strong> ${data.appointmentTime || ""}</p>
