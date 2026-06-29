@@ -1,12 +1,8 @@
-import { useState } from "react";
-
-export default function Home() {
-  const [form, setForm] = useState({
-    dealership: "",
-    appointmentDate: "",
+appointmentDate: "",
     appointmentTime: "",
     wheelQuantity: "",
     wheelPosition: "",
+    serviceType: "",
     advisorName: "",
     advisorEmail: "",
     requestedBy: "Advisor",
@@ -63,10 +59,11 @@ export default function Home() {
           <div className="checkmark">✓</div>
           <h1>Appointment <span>Booked!</span></h1>
           <p>
-  Thank you for choosing Elevate Wheel Studio. We have received your
-  appointment request. A confirmation email has been sent to the advisor
-  or representative listed on the booking.
-</p>
+            Thank you for choosing Elevate Wheel Studio. We have received your
+            appointment request. A confirmation email has been sent to the advisor
+            or representative listed on the booking.
+          </p>
+
           <div className="bookingRef">
             <small>BOOKING REFERENCE</small>
             <strong>{bookingRef}</strong>
@@ -78,6 +75,7 @@ export default function Home() {
             <p><b>Dealership:</b> {form.dealership}</p>
             <p><b>Requested By:</b> {form.requestedBy}</p>
             <p><b>Department:</b> {form.dealershipDepartment}</p>
+            <p><b>Service Type:</b> {form.serviceType}</p>
             <p><b>Vehicle:</b> {form.vehicle}</p>
           </div>
 
@@ -165,6 +163,18 @@ export default function Home() {
               <option>Rear Right</option>
               <option>Multiple Wheels</option>
               <option>All Wheels</option>
+            </select>
+
+            <select name="serviceType" value={form.serviceType} onChange={update} required>
+              <option value="">Service Type *</option>
+              <option>Wheel Repair</option>
+              <option>Wheel Refinish</option>
+              <option>Powder Coating</option>
+              <option>Color Change</option>
+              <option>Bent Wheel Repair</option>
+              <option>Cracked Wheel Repair</option>
+              <option>Custom Finish</option>
+              <option>Multiple Services</option>
             </select>
 
             <input name="advisorName" placeholder="Advisor / BDC Name *" value={form.advisorName} onChange={update} required />
