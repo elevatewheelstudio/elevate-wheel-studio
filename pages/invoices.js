@@ -32,13 +32,16 @@ export default function InvoicesDashboard() {
     loadInvoices();
   }, []);
 
-  const updateStatus = async (id, status) => {
+  const updateStatus = async (invoiceNumber, status) => {
     const res = await fetch("/api/update-invoice-status", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ id, status }),
+      body: JSON.stringify({
+        invoiceNumber,
+        status,
+      }),
     });
 
     const result = await res.json();
@@ -50,7 +53,9 @@ export default function InvoicesDashboard() {
 
     setInvoices((current) =>
       current.map((invoice) =>
-        invoice.id === id ? { ...invoice, status } : invoice
+        invoice.invoice_number === invoiceNumber
+          ? { ...invoice, status }
+          : invoice
       )
     );
   };
@@ -139,18 +144,20 @@ export default function InvoicesDashboard() {
 
             <tbody>
               {filteredInvoices.map((invoice) => (
-                <tr key={invoice.id}>
+                <tr key={invoice.invoice_number}>
                   <td>
                     {invoice.sent_at
                       ? new Date(invoice.sent_at).toLocaleDateString("en-CA")
                       : "-"}
                   </td>
+
                   <td>{invoice.invoice_number || "-"}</td>
+
                   <td>
                     <select
                       value={invoice.status || "Sent"}
                       onChange={(e) =>
-                        updateStatus(invoice.id, e.target.value)
+                        updateStatus(invoice.invoice_number, e.target.value)
                       }
                     >
                       <option>Draft</option>
@@ -159,6 +166,7 @@ export default function InvoicesDashboard() {
                       <option>Paid</option>
                     </select>
                   </td>
+
                   <td>{invoice.customer_name || "-"}</td>
                   <td>{invoice.dealership || "-"}</td>
                   <td>{invoice.repair_order || "-"}</td>
