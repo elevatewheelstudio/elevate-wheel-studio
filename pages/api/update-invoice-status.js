@@ -13,12 +13,19 @@ export default async function handler(req, res) {
     process.env.SUPABASE_SERVICE_ROLE_KEY
   );
 
- const { invoiceNumber, status } = req.body;
+  const { invoiceNumber, status } = req.body;
+
+  if (!invoiceNumber || !status) {
+    return res.status(400).json({
+      success: false,
+      error: "Missing invoice number or status.",
+    });
+  }
 
   const { error } = await supabase
     .from("invoices")
     .update({ status })
-    .eq("invoice_number", invoiceNumber)
+    .eq("invoice_number", invoiceNumber);
 
   if (error) {
     return res.status(500).json({
