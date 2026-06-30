@@ -28,7 +28,7 @@ export default async function handler(req, res) {
   const bookingStatus = "New";
 
   const confirmationEmail = data.customerEmail || data.advisorEmail || "";
-  const confirmationName = data.customerName || data.advisorName || "there";
+  const confirmationName = data.advisorName || data.customerName || "there"; 
 
   try {
     const { error: bookingSaveError } = await supabase.from("bookings").insert([
@@ -80,15 +80,15 @@ export default async function handler(req, res) {
         from: "Elevate Wheel Studio <info@elevatewheelstudio.com>",
         to: confirmationEmail,
         cc: data.advisorEmail && data.customerEmail ? data.advisorEmail : undefined,
-        subject: `Appointment Request Received - ${bookingRef}`,
+        subject: `Elevate Wheel Studio Booking Confirmation - ${bookingRef}`,
         html: `
           <div style="font-family:Arial,Helvetica,sans-serif;background:#050505;color:#ffffff;padding:30px;">
             <div style="max-width:650px;margin:auto;background:#111111;border:1px solid #333333;padding:25px;">
               <h1 style="color:#e4001b;">Appointment Request Received</h1>
-              <p>Hello ${confirmationName},</p>
-              <p>Your appointment request has been received.</p>
+             <p>Hello ${confirmationName},</p>
+<p>Thank you for submitting a wheel service request to Elevate Wheel Studio.</p>
+<p>Your booking reference is <strong>${bookingRef}</strong>.</p>
               <h2 style="color:#e4001b;">${bookingRef}</h2>
-              <p><strong>Status:</strong> ${bookingStatus}</p>
               <hr />
               <p><strong>Date:</strong> ${data.appointmentDate || "To be confirmed"}</p>
               <p><strong>Time:</strong> ${data.appointmentTime || "To be confirmed"}</p>
