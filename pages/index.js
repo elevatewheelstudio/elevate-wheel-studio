@@ -98,11 +98,12 @@ appointmentDate: "",
     <main className="page">
       <header className="header">
         <img src="/logo_transparent (3).png" className="logo" />
-        <nav>
-          <a href="#services">Services</a>
-          <a href="#about">About</a>
-          <a href="#booking">Book</a>
-        </nav>
+       <nav>
+  <a href="#services">Services</a>
+  <a href="#about">About</a>
+  <a href="#booking">Book</a>
+  <a href="/admin-login">Admin</a>
+</nav>
       </header>
 
       <section className="hero">
