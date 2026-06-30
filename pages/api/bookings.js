@@ -34,7 +34,7 @@ export default async function handler(req, res) {
     const { error: bookingSaveError } = await supabase.from("bookings").insert([
       {
         status: bookingStatus,
-        customer_name: data.customerName || data.advisorName || data.requestedBy || "",
+      customer_name: data.advisorName || data.customerName || data.requestedBy || "",
         customer_email: confirmationEmail,
         customer_phone: data.customerPhone || "",
         dealership: data.dealership || data.dealershipDepartment || "",
